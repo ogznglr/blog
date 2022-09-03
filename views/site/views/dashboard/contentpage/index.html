@@ -1,0 +1,28 @@
+{{define "contentpage"}}
+<!DOCTYPE html>
+<html lang="en">
+
+{{template "contenthead" .Post}}
+
+<body>
+
+  {{template "header" .Categories}}
+
+  <main id="main">
+
+
+    {{template "singlecontent" . }}
+
+  </main><!-- End #main -->
+
+  <!-- ======= Footer ======= -->
+  
+  {{template "footer"}}
+
+  <a href="#" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+{{template "sitescripts"}}
+</body>
+
+</html>
+{{end}}

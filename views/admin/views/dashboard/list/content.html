@@ -1,0 +1,39 @@
+{{define "admincontent"}}
+    <h1>
+        Articles
+        <a href="/admin/new_post" class="btn btn-outline-primary float-right">
+            <i class="fa fa-plus"> Add New
+            </i>
+        </a>
+    </h1>
+    <br>
+
+    <br>
+    <table class="table table-striped">
+        <thead>
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Main Picture</th>
+            <th scope="col">Title</th>
+            <th scope="col">Category</th>
+            <th scope="col">Created At</th>
+            <th scope="col">Operations</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{range $index, $value := .}}
+          <tr>
+            <td>{{$value.ID}}</td>
+            <td><div class="box"><img width="80px" height="80px" src="{{ $value.PictureURL }}" alt=""></div></td>
+            <td>{{ $value.Title }}</td>
+            <td>{{ getCategoryName $value.CategoryId }}</td>
+            <td>{{ $value.CreatedAt }}</td>
+            <td>
+              <a href="/admin/edit/{{ $value.ID }}"><button class="btn btn-outline-warning"><i class="fa fa-pen"></i></button></a>
+              <a onclick="checker()" id="btn-delete" href="/admin/delete/{{ $value.ID }}"><button class="btn btn-outline-danger"><i class="fa fa-trash"></i></button></a>
+            </td>
+          </tr>
+          {{end}}
+        </tbody>
+      </table>
+{{end}}

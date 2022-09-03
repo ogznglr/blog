@@ -1,0 +1,11 @@
+{{define "postsbycategory"}}
+<div class="container-post" data-aos="fade-in">
+  {{range $index,$value := .Posts}}
+  <div class="post">
+    <a href="/articles/{{getCategoryName $value.CategoryId}}/{{$value.Slug}}"><img src="{{$value.PictureURL}}" alt="" class="img-fluid"></a>
+    <div class="post-meta"><span class="category">{{getCategoryName $value.CategoryId}}</span> <span class="mx-1">&bullet;</span> <span>Jul 5th '22</span></div>
+    <h2><a href="/articles/{{getCategoryName $value.CategoryId}}/{{$value.Slug}}">{{$value.Title}}</a></h2>
+  </div>
+  {{end}}
+</div>
+{{end}}

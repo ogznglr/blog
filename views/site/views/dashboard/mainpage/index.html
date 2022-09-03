@@ -1,0 +1,60 @@
+{{define "mainpage"}}
+<!DOCTYPE html>
+<html lang="en">
+
+{{template "head"}}
+
+<body>
+
+  {{template "header" .Categories}}
+
+  <main id="main">
+
+    <!-- ======= Hero Slider Section ======= -->
+    <section id="hero-slider" class="hero-slider">
+      <div class="container-md" data-aos="fade-in">
+        <div class="row">
+          <div class="col-12">
+            <div class="swiper sliderFeaturedPosts">
+              <div class="swiper-wrapper">
+                {{range $index, $value := .ssPosts}}
+                <div class="swiper-slide">
+                  <a href="/articles/{{getCategoryName $value.CategoryId}}/{{$value.Slug}}" class="img-bg d-flex align-items-end" style="background-image: url('{{$value.PictureURL}}');">
+                    <div class="img-bg-inner">
+                      <h2>{{$value.Title}}</h2>
+                      <p>{{$value.Description}}</p>
+                    </div>
+                  </a>
+                </div>
+                {{end}}
+              </div>
+              <div class="custom-swiper-button-next">
+                <span class="bi-chevron-right"></span>
+              </div>
+              <div class="custom-swiper-button-prev">
+                <span class="bi-chevron-left"></span>
+              </div>
+
+              <div class="swiper-pagination"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section><!-- End Hero Slider Section -->
+
+    {{template "content" . }}
+
+  </main><!-- End #main -->
+
+  <!-- ======= Footer ======= -->
+  
+  {{template "footer"}}
+
+  <a href="#" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+{{template "sitescripts"}}
+
+</body>
+
+</html>
+{{end}}

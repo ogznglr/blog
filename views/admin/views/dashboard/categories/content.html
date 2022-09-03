@@ -1,0 +1,59 @@
+{{define "categories_content"}}
+    <h1>
+        Categories
+    </h1>
+    <br>
+
+    <br>
+    <form action="/admin/categories/add" method="post">
+        <input type="text" class="form-control" placeholder="Category Name" name="category-name">
+        <button class="btn btn-success">Add New Category</button>
+    </form>
+
+    <table class="table table-striped">
+        <thead>
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Name</th>
+            <th scope="col">Slug</th>
+            <th scope="col">Created At</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{range $index, $value := .}}
+          <tr>
+            <td>{{ $value.ID }}</td>
+            <td>{{ $value.Name }}</td>
+            <td>{{ $value.Slug }}</td>
+            <td>{{ $value.CreatedAt }}</td>
+            <td>
+              <a onclick="checker()" id="btn-delete" href="/admin/categories/delete/{{ $value.ID }}"><button class="btn btn-outline-danger"><i class="fa fa-trash"></i></button></a>
+            </td>
+          </tr>
+          {{end}}
+        </tbody>
+      </table>
+      <script>
+        function checker(){
+          iziToast.show({
+    theme: 'dark',
+    icon: 'icon-person',
+    title: 'Do you want to delete this post?',
+    position: 'center',
+    progressBar:false,
+    buttons: [
+        ['<button>YES</button>', function (instance, toast) {
+          
+        }, true], // true to focus
+          ['<button>NO</button>', function (instance, toast) {
+            event.preventDefault();
+            instance.hide({
+            transitionOut: 'fadeOutUp',
+          }, toast, 'buttonName');
+        }]
+    ],
+});
+        }
+       
+      </script>
+{{end}}

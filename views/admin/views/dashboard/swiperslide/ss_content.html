@@ -1,0 +1,64 @@
+{{define "swiperslide"}}
+    <h1>
+        Choose Swiper Slide Posts
+        <a href="/admin" class="btn btn-outline-primary float-right">
+            <i class="fa fa-arrow-left"> Get Back</i>
+        </a>
+    </h1>
+
+      <div class="container">
+        <div class="row">
+          <div class="col-sm">
+            <h2>Posts</h2>
+            <table class="table table-striped">
+              <tbody>
+                {{range $index, $value := .Posts}}
+                <tr>
+                  <td>{{$value.ID}}</td>
+                  <td><div class="box"><img width="80px" height="80px" src="{{ $value.PictureURL }}" alt=""></div></td>
+                  <td>{{ $value.Title }}</td>
+                  <td>{{ getCategoryName $value.CategoryId }}</td>
+                  <td>{{ $value.CreatedAt }}</td>
+                  <td>
+                    <form action="/admin/add_swiper" method="post">
+                      <input type="hidden" value="{{ $value.ID }}" name="post">
+                      <button class="btn btn-outline-warning"><i class="fa fa-plus"></i></button>
+                    </form>
+                  </td>
+                </tr>
+                
+                {{end}}
+              </tbody>
+            </table>
+          </div>
+          <div class="col-sm">
+            <h2>Swiper Slide Posts</h2>
+            <table class="table table-striped">
+              <tbody>
+                {{range $index, $value := .SPosts}}
+                <tr>
+                  <td>{{$value.ID}}</td>
+                  <td><div class="box"><img width="80px" height="80px" src="{{ $value.PictureURL }}" alt=""></div></td>
+                  <td>{{ $value.Title }}</td>
+                  <td>{{ getCategoryName $value.CategoryId }}</td>
+                  <td>{{ $value.CreatedAt }}</td>
+                  <td>
+                    <form action="/admin/remove_swiper" method="post">
+                      <input type="hidden" value="{{ $value.ID }}" name="post">
+                      <button class="btn btn-outline-warning"><i class="fa fa-trash"></i></button>
+                    </form>
+                  </td>
+                </tr>
+                {{end}}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    
+    <br>
+
+    <script>
+
+    </script>
+{{end}}

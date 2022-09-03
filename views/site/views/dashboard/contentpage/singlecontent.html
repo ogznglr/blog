@@ -1,0 +1,28 @@
+{{define "singlecontent"}}
+<section class="single-post-content">
+  <div class="container">
+    <div class="row">
+      <div class="col-md post-content" data-aos="fade-up">
+
+        <!-- ======= Single Post Content ======= -->
+        <div class="single-post">
+          <div class="post-meta"><span class="date">{{getCategoryName .Post.CategoryId}}</span> <span class="mx-1">&bullet;</span> <span>{{getDate .Post.CreatedAt}}</span></div>
+          <h1 class="mb-5">{{ .Post.Title }}</h1>
+          <h5 class="description">{{.Post.Description}}</h5>
+          
+
+          <figure class="my-4">
+            <img src="{{.Post.PictureURL}}" alt="" class="img-fluid">
+          </figure>
+          <div id="blog-content"></div>
+          </div><!-- End Single Post Content -->
+      </div>
+    </div>
+      </div>
+    </div>
+  </div>
+</section>
+<script>
+  document.getElementById("blog-content").innerHTML ="{{.Post.Content}}"
+</script>
+{{end}}

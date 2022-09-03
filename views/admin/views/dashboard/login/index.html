@@ -1,0 +1,34 @@
+{{ define "login" }}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/admin/assets/css/loginstyle.css" />
+    <link href="/admin/assets/css/iziToast.min.css" rel="stylesheet">
+    <title>Survey Form</title>
+</head>
+<body>
+  <header>
+    <h1 id="title">Admin Panel</h1>
+    <p id="description">Welcome Please Login</p>
+  </header>
+  <form id="survey-form" action="/admin/login" method="post">
+    <fieldset>
+        <label id="name-label">
+            Enter your Username
+            <input type="password" name="username" id="username" placeholder="Username" class="forms" required />
+          </label>
+          <label id="number-label">
+            Password:
+            <input type="password" name="password" id="password" placeholder="Password" class="forms" required />
+          </label>
+    </fieldset>
+    <input type="submit" id="submit">
+  </form>
+</body>
+</html>
+<script src="/admin/assets/js/iziToast.min.js"></script>
+{{template "alert" .Alert}}
+{{ end }}
