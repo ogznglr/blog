@@ -21,7 +21,7 @@ services:
     ports:
       - 80:8080
     volumes:
-       - blogvolume:/go/src/goweb/uploads
+       - blogvolume:/uploads
     restart: always
 volumes:
     mysqlvolume:
