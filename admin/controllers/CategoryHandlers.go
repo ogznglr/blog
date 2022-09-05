@@ -6,13 +6,14 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gosimple/slug"
+	"github.com/ogznglr/session"
 )
 
 func AddCategory(c *fiber.Ctx) error {
 	//Guard process
 	_, err := UserValidation(c)
 	if err != nil {
-		helpers.SetFlash(c, "Please Login")
+		session.SetFlash(c, "Please Login")
 		return c.Redirect("/admin/login")
 	}
 
@@ -29,7 +30,7 @@ func AddCategory(c *fiber.Ctx) error {
 	}
 	category.Add()
 
-	helpers.SetFlash(c, "Category is saved successfully!")
+	session.SetFlash(c, "Category is saved successfully!")
 	return c.Redirect("/admin/categories")
 }
 
@@ -37,7 +38,7 @@ func DeleteCategory(c *fiber.Ctx) error {
 	//Guard Process
 	_, err := UserValidation(c)
 	if err != nil {
-		helpers.SetFlash(c, "Please Login")
+		session.SetFlash(c, "Please Login")
 		return c.Redirect("/admin/login")
 	}
 
@@ -47,6 +48,6 @@ func DeleteCategory(c *fiber.Ctx) error {
 	}
 	category := models.Category{}.Get(deleteId)
 	category.Delete()
-	helpers.SetFlash(c, "Category is deleted successfully!")
+	session.SetFlash(c, "Category is deleted successfully!")
 	return c.Redirect("/admin/categories")
 }

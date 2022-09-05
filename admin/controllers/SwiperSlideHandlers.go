@@ -5,13 +5,14 @@ import (
 	"blog/admin/models"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/ogznglr/session"
 )
 
 func AddSwiper(c *fiber.Ctx) error {
 	//Guard operations
 	_, err := UserValidation(c)
 	if err != nil {
-		helpers.SetFlash(c, "Please Login")
+		session.SetFlash(c, "Please Login")
 		return c.Redirect("/admin/login")
 	}
 
@@ -35,7 +36,7 @@ func RemoveSwiper(c *fiber.Ctx) error {
 	//Guard operations
 	_, err := UserValidation(c)
 	if err != nil {
-		helpers.SetFlash(c, "Please Login")
+		session.SetFlash(c, "Please Login")
 		return c.Redirect("/admin/login")
 	}
 

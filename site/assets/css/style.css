@@ -14,10 +14,11 @@
   }
   
   .post {
-    width: 20%;
+    width: 25%;
     height: 300px;
     margin: auto;
     padding: 10px;
+    object-fit: cover;
   }
   
   .post img{
@@ -31,4 +32,14 @@
 
   .description{
     margin-left: 20px;
+  }
+  @media (max-width: 1000px) {
+    .post {
+      width: 50%;
+    }
+  }
+  @media (max-width: 800px) {
+    .post {
+      width: 100%;
+    }
   }

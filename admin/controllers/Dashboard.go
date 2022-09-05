@@ -5,6 +5,7 @@ import (
 	"blog/admin/models"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/ogznglr/session"
 )
 
 type Dashboard struct {
@@ -25,19 +26,11 @@ type SwiperSlidePage struct {
 func (Dashboard) Index(c *fiber.Ctx) error {
 	_, err := UserValidation(c)
 	if err != nil {
-		helpers.SetFlash(c, "Please Login")
+		session.SetFlash(c, "Please Login")
 		return c.Redirect("/admin/login")
 	}
 	//Alert operations
-	message := helpers.GetFlash(c)
-	isalert := false
-	if message != "" {
-		isalert = true
-	}
-
-	alert := make(map[string]interface{})
-	alert["is-alert"] = isalert
-	alert["message"] = message
+	alert := session.GetFlash(c)
 
 	posts := models.Post{}.GetAll()
 
@@ -50,7 +43,7 @@ func (Dashboard) Index(c *fiber.Ctx) error {
 func (NewPost) Index(c *fiber.Ctx) error {
 	_, err := UserValidation(c)
 	if err != nil {
-		helpers.SetFlash(c, "Please Login")
+		session.SetFlash(c, "Please Login")
 		return c.Redirect("/admin/login")
 	}
 	categories := models.Category{}.GetAll()
@@ -63,7 +56,7 @@ func (NewPost) Index(c *fiber.Ctx) error {
 func (Edit) Index(c *fiber.Ctx) error {
 	_, err := UserValidation(c)
 	if err != nil {
-		helpers.SetFlash(c, "Please Login")
+		session.SetFlash(c, "Please Login")
 		return c.Redirect("/admin/login")
 	}
 
@@ -83,15 +76,7 @@ func (Edit) Index(c *fiber.Ctx) error {
 	return nil
 }
 func (LoginPage) Index(c *fiber.Ctx) error {
-	message := helpers.GetFlash(c)
-	isalert := false
-	if message != "" {
-		isalert = true
-	}
-	//alert operations
-	alert := make(map[string]interface{})
-	alert["is-alert"] = isalert
-	alert["message"] = message
+	alert := session.GetFlash(c)
 
 	c.Render("login", fiber.Map{
 		"Alert": alert})
@@ -100,19 +85,11 @@ func (LoginPage) Index(c *fiber.Ctx) error {
 func (Categories) Index(c *fiber.Ctx) error {
 	_, err := UserValidation(c)
 	if err != nil {
-		helpers.SetFlash(c, "Please Login")
+		session.SetFlash(c, "Please Login")
 		return c.Redirect("/admin/login")
 	}
 	//Flash message operations
-	message := helpers.GetFlash(c)
-	isalert := false
-	if message != "" {
-		isalert = true
-	}
-
-	alert := make(map[string]interface{})
-	alert["is-alert"] = isalert
-	alert["message"] = message
+	alert := session.GetFlash(c)
 
 	//Get all the categories and send to client
 	categories := models.Category{}.GetAll()
@@ -125,19 +102,11 @@ func (Categories) Index(c *fiber.Ctx) error {
 func (SwiperSlidePage) Index(c *fiber.Ctx) error {
 	_, err := UserValidation(c)
 	if err != nil {
-		helpers.SetFlash(c, "Please Login")
+		session.SetFlash(c, "Please Login")
 		return c.Redirect("/admin/login")
 	}
 	//Flash message operations
-	message := helpers.GetFlash(c)
-	isalert := false
-	if message != "" {
-		isalert = true
-	}
-
-	alert := make(map[string]interface{})
-	alert["is-alert"] = isalert
-	alert["message"] = message
+	alert := session.GetFlash(c)
 
 	//Get all the posts and send to client
 	allposts := models.Post{}.GetAll()

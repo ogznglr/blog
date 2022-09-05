@@ -6,12 +6,11 @@ import (
 	"blog/admin/models"
 	"fmt"
 	"strconv"
-	"time"
 
 	"crypto/sha256"
 
-	"github.com/dgrijalva/jwt-go/v4"
 	"github.com/gofiber/fiber/v2"
+	"github.com/ogznglr/session"
 )
 
 var secretKey = "SecretKey"
@@ -34,45 +33,20 @@ func Login(c *fiber.Ctx) error {
 		return c.Redirect("/admin/login")
 	}
 	//Cookie and Session operations
-	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, &jwt.StandardClaims{
-		Issuer:    strconv.Itoa(int(user.ID)),
-		ExpiresAt: jwt.NewTime(1900000000),
-	})
+	s := session.New(24)
+	s.Set(c, strconv.Itoa(int(user.ID)), secretKey)
 
-	token, _ := claims.SignedString([]byte(secretKey))
-	cookie := fiber.Cookie{
-		Name:     "jwt",
-		Value:    token,
-		Expires:  time.Now().Add(time.Hour * 24),
-		HTTPOnly: true,
-		Secure:   false,
-	}
-	c.Cookie(&cookie)
-
-	helpers.SetFlash(c, "Login Successfully!")
+	session.SetFlash(c, "Login Successfully!")
 	return c.Redirect("/admin")
 }
 
-func UserValidation(c *fiber.Ctx) (*jwt.StandardClaims, error) {
-	cookie := c.Cookies("jwt")
-	token, err := jwt.ParseWithClaims(cookie, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error) {
-		return []byte(secretKey), nil
-	})
-
-	if err != nil {
-		return nil, err
-	}
-
-	return token.Claims.(*jwt.StandardClaims), nil
+func UserValidation(c *fiber.Ctx) (string, error) {
+	s := session.New()
+	return s.Get(c, secretKey)
 }
 
 func Logout(c *fiber.Ctx) error {
-	logoutcookie := fiber.Cookie{
-		Name:     "jwt",
-		Value:    "",
-		Expires:  time.Now().Add(-time.Hour),
-		HTTPOnly: true,
-	}
-	c.Cookie(&logoutcookie)
+	s := session.New()
+	s.Delete(c)
 	return c.Redirect("/admin")
 }

@@ -9,13 +9,14 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gosimple/slug"
+	"github.com/ogznglr/session"
 )
 
 func AddPost(c *fiber.Ctx) error {
 	//Guard process
 	_, err := UserValidation(c)
 	if err != nil {
-		helpers.SetFlash(c, "Please Login")
+		session.SetFlash(c, "Please Login")
 		return c.Redirect("/admin/login")
 	}
 	//if user is valid
@@ -86,7 +87,7 @@ func AddPost(c *fiber.Ctx) error {
 func DeletePost(c *fiber.Ctx) error {
 	_, err := UserValidation(c)
 	if err != nil {
-		helpers.SetFlash(c, "Please Login")
+		session.SetFlash(c, "Please Login")
 		return c.Redirect("/admin/login")
 	}
 	//if user is valid
@@ -113,7 +114,7 @@ func DeletePost(c *fiber.Ctx) error {
 func EditPost(c *fiber.Ctx) error {
 	_, err := UserValidation(c)
 	if err != nil {
-		helpers.SetFlash(c, "Please Login")
+		session.SetFlash(c, "Please Login")
 		return c.Redirect("/admin/login")
 	}
 	//if user is valid
