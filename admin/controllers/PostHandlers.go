@@ -46,7 +46,7 @@ func AddPost(c *fiber.Ctx) error {
 	}
 
 	//save file
-	err = c.SaveFile(picture, fmt.Sprintf("/uploads/%s", picture.Filename))
+	err = c.SaveFile(picture, fmt.Sprintf("./uploads/%s", picture.Filename))
 	if err != nil {
 		return err
 	}
@@ -140,7 +140,7 @@ func EditPost(c *fiber.Ctx) error {
 		//first delete old picture
 		_ = os.Remove(helpers.DeleteFirstSlender(refPost.PictureURL))
 
-		_ = c.SaveFile(picture, fmt.Sprintf("/uploads/%s", picture.Filename))
+		_ = c.SaveFile(picture, fmt.Sprintf("./uploads/%s", picture.Filename))
 		refPost.PictureURL = fmt.Sprintf("/uploads/%s", picture.Filename)
 	}
 
