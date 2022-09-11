@@ -1,4 +1,14 @@
 
+  .code{
+    
+  }
+  
+  pre {
+    font-family: Consolas,"courier new";
+    background-color: #f1f1f1;
+    padding: 2px;
+    font-size: 105%;
+  }
   
   .container-post {
     display: flex;

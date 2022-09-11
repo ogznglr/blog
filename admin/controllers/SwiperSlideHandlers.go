@@ -28,7 +28,7 @@ func AddSwiper(c *fiber.Ctx) error {
 	models.SwiperSlide{
 		Postid: post.ID,
 	}.Add()
-	helpers.SetFlash(c, "Swiper Slide Is Added Succesfully")
+	session.SetFlash(c, "Swipe Slide has added successfully!")
 	return c.Redirect("/admin/swiperslide")
 }
 
@@ -45,6 +45,6 @@ func RemoveSwiper(c *fiber.Ctx) error {
 		Postid: uint(ssid),
 	}.Remove()
 
-	helpers.SetFlash(c, "SwiperSlide Deleted Succesfully")
+	session.SetFlash(c, "Swiper Slide deleted successfully!")
 	return c.Redirect("/admin/swiperslide")
 }

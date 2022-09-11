@@ -21,7 +21,7 @@ func AddCategory(c *fiber.Ctx) error {
 	categorySlug := slug.Make(categoryName)
 
 	if categoryName == "" {
-		helpers.SetFlash(c, "Category couldn't been saved.")
+		session.SetFlash(c, "Category couldn't be saved!")
 		return c.Redirect("/admin/categories")
 	}
 	category := models.Category{

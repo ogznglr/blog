@@ -78,7 +78,7 @@ func AddPost(c *fiber.Ctx) error {
 	post.Add()
 
 	//Send A Flash message
-	helpers.SetFlash(c, "Post published successfully!")
+	session.SetFlash(c, "Post published successfully!")
 
 	return c.Redirect("/admin", http.StatusSeeOther)
 	//TODO Alert
@@ -105,7 +105,7 @@ func DeletePost(c *fiber.Ctx) error {
 	post.Delete()
 	models.SwiperSlide{Postid: post.ID}.Remove()
 
-	helpers.SetFlash(c, "Post is deleted succsessfully!")
+	session.SetFlash(c, "Post is deleted successfully!")
 
 	return c.Redirect("/admin")
 
@@ -154,7 +154,7 @@ func EditPost(c *fiber.Ctx) error {
 	}
 	refPost.Updates(post)
 
-	helpers.SetFlash(c, "Post is edited succsessfully!")
+	session.SetFlash(c, "Post is edited successfully!")
 
 	c.Redirect("/admin")
 	return nil

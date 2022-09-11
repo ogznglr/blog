@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"blog/admin/database"
-	"blog/admin/helpers"
 	"blog/admin/models"
 	"fmt"
 	"strconv"
@@ -23,13 +22,13 @@ func Login(c *fiber.Ctx) error {
 	database.DB.Where("username = ?", data["username"]).First(&user) //find the user from database that we want
 	//if user is not found
 	if user.ID == 0 {
-		helpers.SetFlash(c, "User not found!")
+		session.SetFlash(c, "Wron Username Or Password!")
 		return c.Redirect("/admin/login")
 	}
 	//if user is found confirm if password is true
 	pw := fmt.Sprintf("%x", sha256.Sum256([]byte(data["password"])))
 	if user.Password != pw {
-		helpers.SetFlash(c, "Wrong Password!")
+		session.SetFlash(c, "Wron Username Or Password!")
 		return c.Redirect("/admin/login")
 	}
 	//Cookie and Session operations
