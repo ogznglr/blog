@@ -9,11 +9,12 @@ import (
 	"net"
 	"time"
 
+	"golang.org/x/crypto/acme/autocert"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/encryptcookie"
 	"github.com/gofiber/template/html"
-	"golang.org/x/crypto/acme/autocert"
 )
 
 func init() {
@@ -28,7 +29,7 @@ func main() {
 	//Certificate
 	certManager := autocert.Manager{
 		Prompt:     autocert.AcceptTOS,
-		HostPolicy: autocert.HostWhitelist("localhost"),
+		HostPolicy: autocert.HostWhitelist("oguzhanguler.dev", "www.oguzhanguler.dev"),
 		Cache:      autocert.DirCache("certs"),
 	}
 
@@ -36,7 +37,7 @@ func main() {
 		GetCertificate: certManager.GetCertificate,
 	}
 
-	listener, _ := net.Listen("tcp", ":80")
+	listener, _ := net.Listen("tcp", ":8080")
 	listener = tls.NewListener(listener, TLSConfig)
 
 	//-------------------------------------------------------------------
@@ -71,7 +72,6 @@ func main() {
 	}))
 
 	routes.Setup(app)
-
-	app.Listen(":8080")
+	app.Listener(listener)
 
 }
