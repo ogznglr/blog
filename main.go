@@ -6,7 +6,6 @@ import (
 	"blog/routes"
 	"crypto/tls"
 	"fmt"
-	"net"
 	"time"
 
 	"golang.org/x/crypto/acme/autocert"
@@ -29,7 +28,7 @@ func main() {
 	//Certificate
 	certManager := autocert.Manager{
 		Prompt:     autocert.AcceptTOS,
-		HostPolicy: autocert.HostWhitelist("oguzhanguler.dev", "www.oguzhanguler.dev"),
+		HostPolicy: autocert.HostWhitelist("oguzhanguler.dev"),
 		Cache:      autocert.DirCache("certs"),
 	}
 
@@ -38,9 +37,7 @@ func main() {
 	}
 
 	// listener, _ := net.Listen("tcp", ":8080")
-	listener, _ := net.Listen("tcp", ":443")
-	listener = tls.NewListener(listener, TLSConfig)
-
+	listener, _ := tls.Listen("tcp", ":443", TLSConfig)
 	//-------------------------------------------------------------------
 
 	engine := html.New("./views", ".html")
