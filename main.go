@@ -73,6 +73,6 @@ func main() {
 	}))
 
 	routes.Setup(app)
-	app.ListenTLS(":443", "./go-server.crt", "./go-server.key")
+	app.Listener(listener)
 
 }
