@@ -5,12 +5,16 @@ import (
 	"blog/admin/models"
 	"blog/routes"
 	"crypto/tls"
+	"fmt"
 	"log"
+	"time"
 
 	"golang.org/x/crypto/acme/autocert"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2/middleware/encryptcookie"
+	"github.com/gofiber/template/html"
 )
 
 func init() {
@@ -23,15 +27,39 @@ func init() {
 
 func main() {
 
-	// Fiber instance
-	app := fiber.New()
+	//Engine processess
+	engine := html.New("./views", ".html")
+	engine.AddFuncMap(fiber.Map{
+		"getCategoryName": func(categoryId int) string {
+			return models.Category{}.Get(categoryId).Name
+		},
+		"getRange": func(postNumber int) int {
+			if postNumber <= 3 {
+				return 1
+			}
+			return postNumber / 3
+		},
+		"getDate": func(t time.Time) string {
+			return fmt.Sprintf("%d %s %d", t.Day(), t.Month().String(), t.Year())
+		},
+	})
 
-	// Routes
-	routes.Setup(app)
+	engine.Reload(true) //updates files in each rendering
+
+	app := fiber.New(fiber.Config{
+		Views: engine,
+	})
+	//------------------------------------------------------------------------
 
 	app.Use(cors.New(cors.Config{
 		AllowCredentials: true,
 	}))
+	app.Use(encryptcookie.New(encryptcookie.Config{
+		Key: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+	}))
+
+	// Routes
+	routes.Setup(app)
 
 	// Let’s Encrypt has rate limits: https://letsencrypt.org/docs/rate-limits/
 	// It's recommended to use it's staging environment to test the code:
@@ -82,35 +110,6 @@ func main() {
 // // listener, _ := net.Listen("tcp", ":8080")
 // listener, _ := tls.Listen("tcp", ":443", TLSConfig)
 // //-------------------------------------------------------------------
-
-// engine := html.New("./views", ".html")
-// engine.AddFuncMap(fiber.Map{
-// 	"getCategoryName": func(categoryId int) string {
-// 		return models.Category{}.Get(categoryId).Name
-// 	},
-// 	"getRange": func(postNumber int) int {
-// 		if postNumber <= 3 {
-// 			return 1
-// 		}
-// 		return postNumber / 3
-// 	},
-// 	"getDate": func(t time.Time) string {
-// 		return fmt.Sprintf("%d %s %d", t.Day(), t.Month().String(), t.Year())
-// 	},
-// })
-
-// engine.Reload(true) //updates files in each rendering
-
-// app := fiber.New(fiber.Config{
-// 	Views: engine,
-// })
-// app.Use(cors.New(cors.Config{
-// 	AllowCredentials: true,
-// }))
-
-// app.Use(encryptcookie.New(encryptcookie.Config{
-// 	Key: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-// }))
 
 // routes.Setup(app)
 // app.Listener(listener)

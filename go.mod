@@ -4,6 +4,7 @@ go 1.18
 
 require (
 	github.com/gofiber/fiber/v2 v2.37.1
+	github.com/gofiber/template v1.7.1
 	github.com/gosimple/slug v1.12.0
 	github.com/ogznglr/session v0.0.0-20220905063122-e33fbcf5ff12
 	golang.org/x/crypto v0.0.0-20220829220503-c86fa9a7ed90
@@ -25,5 +26,4 @@ require (
 	golang.org/x/net v0.0.0-20220225172249-27dd8689420f // indirect
 	golang.org/x/sys v0.0.0-20220227234510-4e6760a101f9 // indirect
 	golang.org/x/text v0.3.7 // indirect
-	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 )
