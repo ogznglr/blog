@@ -12,8 +12,7 @@ const hostName = "yourhostname"
 var DB *gorm.DB
 
 func Connection() {
-	fmt.Sprintf("root:%s@tcp(%s:%s)/blog?charset=utf8mb4&parseTime=True&loc=Local", dbPassword, hostName, dbPort)
-	str := 
+	str := fmt.Sprintf("root:%s@tcp(%s:%s)/blog?charset=utf8mb4&parseTime=True&loc=Local", dbPassword, hostName, dbPort)
 	db, err := gorm.Open(mysql.Open(str), &gorm.Config{})
 	if err != nil {
 		panic("Couldn't connect to the database")
