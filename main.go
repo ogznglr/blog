@@ -27,6 +27,8 @@ func init() {
 
 func main() {
 
+	fmt.Println("this is new build. What is going on here?")
+
 	//Engine processess
 	engine := html.New("./views", ".html")
 	engine.AddFuncMap(fiber.Map{
