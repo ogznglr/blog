@@ -6,7 +6,6 @@ import (
 	"blog/routes"
 	"crypto/tls"
 	"fmt"
-	"log"
 	"time"
 
 	"golang.org/x/crypto/acme/autocert"
@@ -58,58 +57,56 @@ func main() {
 		Key: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
 	}))
 
-	// Routes
-	routes.Setup(app)
-
-	// Let’s Encrypt has rate limits: https://letsencrypt.org/docs/rate-limits/
-	// It's recommended to use it's staging environment to test the code:
-	// https://letsencrypt.org/docs/staging-environment/
-
-	// Certificate manager
-	m := &autocert.Manager{
-		Prompt: autocert.AcceptTOS,
-		// Replace with your domain
+	//Certificate
+	certManager := autocert.Manager{
+		Prompt:     autocert.AcceptTOS,
 		HostPolicy: autocert.HostWhitelist("oguzhanguler.dev"),
-		// Folder to store the certificates
-		Cache: autocert.DirCache("./certs"),
+		Cache:      autocert.DirCache("certs"),
 	}
 
-	// TLS Config
-	cfg := &tls.Config{
-		// Get Certificate from Let's Encrypt
-		GetCertificate: m.GetCertificate,
-		// By default NextProtos contains the "h2"
-		// This has to be removed since Fasthttp does not support HTTP/2
-		// Or it will cause a flood of PRI method logs
-		// http://webconcepts.info/concepts/http-method/PRI
-		NextProtos: []string{
-			"http/1.1", "acme-tls/1",
-		},
+	TLSConfig := &tls.Config{
+		GetCertificate: certManager.GetCertificate,
 	}
-	ln, err := tls.Listen("tcp", ":443", cfg)
-	if err != nil {
-		panic(err)
-	}
+	TLSConfig.Certificates = append(TLSConfig.Certificates, certManager.TLSConfig().Certificates...)
 
-	// Start server
-	log.Fatal(app.Listener(ln))
+	// listener, _ := net.Listen("tcp", ":8080")
+	listener, _ := tls.Listen("tcp", ":443", TLSConfig)
+	//-------------------------------------------------------------------
+
+	routes.Setup(app)
+	app.Listener(listener)
+
 }
 
-// //Certificate
-// certManager := autocert.Manager{
-// 	Prompt:     autocert.AcceptTOS,
-// 	HostPolicy: autocert.HostWhitelist("oguzhanguler.dev"),
-// 	Cache:      autocert.DirCache("certs"),
-// }
+// // Let’s Encrypt has rate limits: https://letsencrypt.org/docs/rate-limits/
+// 	// It's recommended to use it's staging environment to test the code:
+// 	// https://letsencrypt.org/docs/staging-environment/
 
-// TLSConfig := &tls.Config{
-// 	GetCertificate: certManager.GetCertificate,
-// }
-// TLSConfig.Certificates = append(TLSConfig.Certificates, certManager.TLSConfig().Certificates...)
+// 	// Certificate manager
+// 	m := &autocert.Manager{
+// 		Prompt: autocert.AcceptTOS,
+// 		// Replace with your domain
+// 		HostPolicy: autocert.HostWhitelist("oguzhanguler.dev"),
+// 		// Folder to store the certificates
+// 		Cache: autocert.DirCache("./certs"),
+// 	}
 
-// // listener, _ := net.Listen("tcp", ":8080")
-// listener, _ := tls.Listen("tcp", ":443", TLSConfig)
-// //-------------------------------------------------------------------
+// 	// TLS Config
+// 	cfg := &tls.Config{
+// 		// Get Certificate from Let's Encrypt
+// 		GetCertificate: m.GetCertificate,
+// 		// By default NextProtos contains the "h2"
+// 		// This has to be removed since Fasthttp does not support HTTP/2
+// 		// Or it will cause a flood of PRI method logs
+// 		// http://webconcepts.info/concepts/http-method/PRI
+// 		NextProtos: []string{
+// 			"http/1.1", "acme-tls/1",
+// 		},
+// 	}
+// 	ln, err := tls.Listen("tcp", ":443", cfg)
+// 	if err != nil {
+// 		panic(err)
+// 	}
 
-// routes.Setup(app)
-// app.Listener(listener)
+// 	// Start server
+// 	log.Fatal(app.Listener(ln))
