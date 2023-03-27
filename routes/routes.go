@@ -7,7 +7,10 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func Setup(app *fiber.App) error {
+type RouteHandler struct {
+}
+
+func (RouteHandler) Setup(app *fiber.App) error {
 
 	//site
 	app.Get("/", site.Mainpage{}.Index)

@@ -4,16 +4,17 @@ import (
 	"blog/admin/database"
 	"blog/admin/models"
 	"blog/routes"
+	"context"
 	"crypto/tls"
 	"fmt"
 	"log"
 	"time"
 
+	"github.com/caddyserver/certmagic"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/encryptcookie"
 	"github.com/gofiber/template/html"
-	"golang.org/x/crypto/acme/autocert"
 )
 
 func init() {
@@ -48,6 +49,10 @@ func main() {
 	app := fiber.New(fiber.Config{
 		Views: engine,
 	})
+
+	httpapp := fiber.New(fiber.Config{
+		Views: engine,
+	})
 	//------------------------------------------------------------------------
 
 	app.Use(cors.New(cors.Config{
@@ -57,91 +62,47 @@ func main() {
 		Key: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
 	}))
 
-	routes.Setup(app)
+	routes.RouteHandler{}.Setup(app)
+	routes.RouteHandler{}.Setup(httpapp)
 
-	// Let’s Encrypt has rate limits: https://letsencrypt.org/docs/rate-limits/
-	// It's recommended to use it's staging environment to test the code:
-	// https://letsencrypt.org/docs/staging-environment/
-
-	// Certificate manager
-	m := &autocert.Manager{
-		Prompt: autocert.AcceptTOS,
-		// Replace with your domain
-		HostPolicy: autocert.HostWhitelist("oguzhanguler.dev"),
-		// Folder to store the certificates
-		Cache: autocert.DirCache("./certs"),
-	}
-
-	// TLS Config
-	cfg := &tls.Config{
-		// Get Certificate from Let's Encrypt
-		GetCertificate: m.GetCertificate,
-		// By default NextProtos contains the "h2"
-		// This has to be removed since Fasthttp does not support HTTP/2
-		// Or it will cause a flood of PRI method logs
-		// http://webconcepts.info/concepts/http-method/PRI
-		NextProtos: []string{
-			"http/1.1", "acme-tls/1",
+	cache := certmagic.NewCache(certmagic.CacheOptions{
+		GetConfigForCert: func(cert certmagic.Certificate) (*certmagic.Config, error) {
+			// do whatever you need to do to get the right
+			// configuration for this certificate; keep in
+			// mind that this config value is used as a
+			// template, and will be completed with any
+			// defaults that are set in the Default config
+			return &certmagic.Config{
+				// ...
+			}, nil
 		},
-	}
-	ln, err := tls.Listen("tcp", ":443", cfg)
+	})
+
+	magic := certmagic.New(cache, certmagic.Config{
+		// any customizations you need go here
+	})
+
+	myACME := certmagic.NewACMEIssuer(magic, certmagic.ACMEIssuer{
+		CA:     certmagic.LetsEncryptStagingCA,
+		Email:  "admin@oguzhanguler.dev",
+		Agreed: true,
+		// plus any other customizations you need
+	})
+
+	magic.Issuers = append(magic.Issuers, myACME)
+
+	err := magic.ManageSync(context.TODO(), []string{"oguzhanguler.dev"})
 	if err != nil {
 		panic(err)
 	}
 
-	// Start server
-	log.Fatal(app.Listener(ln))
+	tlsConfig := magic.TLSConfig()
+	tlsConfig.NextProtos = append([]string{"h2", "http/1.1"}, tlsConfig.NextProtos...)
+
+	_, err = tls.Listen("tcp", ":443", tlsConfig)
+
+	//start the server with given listener.
+
+	go log.Fatal(httpapp.Listen(":8080"))
 
 }
-
-// // Let’s Encrypt has rate limits: https://letsencrypt.org/docs/rate-limits/
-// 	// It's recommended to use it's staging environment to test the code:
-// 	// https://letsencrypt.org/docs/staging-environment/
-
-// 	// Certificate manager
-// 	m := &autocert.Manager{
-// 		Prompt: autocert.AcceptTOS,
-// 		// Replace with your domain
-// 		HostPolicy: autocert.HostWhitelist("oguzhanguler.dev"),
-// 		// Folder to store the certificates
-// 		Cache: autocert.DirCache("./certs"),
-// 	}
-
-// 	// TLS Config
-// 	cfg := &tls.Config{
-// 		// Get Certificate from Let's Encrypt
-// 		GetCertificate: m.GetCertificate,
-// 		// By default NextProtos contains the "h2"
-// 		// This has to be removed since Fasthttp does not support HTTP/2
-// 		// Or it will cause a flood of PRI method logs
-// 		// http://webconcepts.info/concepts/http-method/PRI
-// 		NextProtos: []string{
-// 			"http/1.1", "acme-tls/1",
-// 		},
-// 	}
-// 	ln, err := tls.Listen("tcp", ":443", cfg)
-// 	if err != nil {
-// 		panic(err)
-// 	}
-
-// 	// Start server
-// 	log.Fatal(app.Listener(ln))
-
-// //Certificate
-// certManager := autocert.Manager{
-// 	Prompt:     autocert.AcceptTOS,
-// 	HostPolicy: autocert.HostWhitelist("oguzhanguler.dev"),
-// 	Cache:      autocert.DirCache("certs"),
-// }
-
-// TLSConfig := &tls.Config{
-// 	GetCertificate: certManager.GetCertificate,
-// }
-// TLSConfig.Certificates = append(TLSConfig.Certificates, certManager.TLSConfig().Certificates...)
-
-// // listener, _ := net.Listen("tcp", ":8080")
-// listener, _ := tls.Listen("tcp", ":443", TLSConfig)
-// //-------------------------------------------------------------------
-
-// routes.Setup(app)
-// app.Listener(listener)
