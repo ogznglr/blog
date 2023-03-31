@@ -1,7 +1,9 @@
 package controllers
 
 import (
+	"blog/admin/helpers"
 	"blog/admin/models"
+	"fmt"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -51,9 +53,13 @@ func (ContentPage) Index(c *fiber.Ctx) error {
 		c.Redirect("/")
 	}
 
+	pagepath := fmt.Sprintf("/articles/%s/%s", category, slug)
+	viewercount, _ := helpers.Ga4Request(pagepath)
+
 	return c.Render("contentpage", fiber.Map{
 		"Post":       post,
 		"Categories": categories,
+		"Viewcount":  viewercount,
 	})
 }
 

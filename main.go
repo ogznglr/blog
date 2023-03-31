@@ -4,13 +4,11 @@ import (
 	"blog/admin/database"
 	"blog/admin/models"
 	"blog/routes"
-	"context"
 	"crypto/tls"
 	"fmt"
 	"log"
 	"time"
 
-	"github.com/caddyserver/certmagic"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/encryptcookie"
@@ -50,9 +48,6 @@ func main() {
 		Views: engine,
 	})
 
-	httpapp := fiber.New(fiber.Config{
-		Views: engine,
-	})
 	//------------------------------------------------------------------------
 
 	app.Use(cors.New(cors.Config{
@@ -63,46 +58,30 @@ func main() {
 	}))
 
 	routes.RouteHandler{}.Setup(app)
-	routes.RouteHandler{}.Setup(httpapp)
 
-	cache := certmagic.NewCache(certmagic.CacheOptions{
-		GetConfigForCert: func(cert certmagic.Certificate) (*certmagic.Config, error) {
-			// do whatever you need to do to get the right
-			// configuration for this certificate; keep in
-			// mind that this config value is used as a
-			// template, and will be completed with any
-			// defaults that are set in the Default config
-			return &certmagic.Config{
-				// ...
-			}, nil
-		},
-	})
+	startServerHttp(app)
 
-	magic := certmagic.New(cache, certmagic.Config{
-		// any customizations you need go here
-	})
+}
 
-	myACME := certmagic.NewACMEIssuer(magic, certmagic.ACMEIssuer{
-		CA:     certmagic.LetsEncryptStagingCA,
-		Email:  "admin@oguzhanguler.dev",
-		Agreed: true,
-		// plus any other customizations you need
-	})
-
-	magic.Issuers = append(magic.Issuers, myACME)
-
-	err := magic.ManageSync(context.TODO(), []string{"oguzhanguler.dev"})
+func startServerHttps(app *fiber.App) {
+	// Load SSL certificate and private key files
+	cert, err := tls.LoadX509KeyPair("oguzhanguler.dev.crt", "oguzhanguler.dev_key.txt")
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
-	tlsConfig := magic.TLSConfig()
-	tlsConfig.NextProtos = append([]string{"h2", "http/1.1"}, tlsConfig.NextProtos...)
+	// Create a TLS config object
+	tlsConfig := &tls.Config{
+		Certificates: []tls.Certificate{cert},
+	}
+	ln, err := tls.Listen("tcp", ":443", tlsConfig)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	_, err = tls.Listen("tcp", ":443", tlsConfig)
+	log.Fatal(app.Listener(ln))
+}
 
-	//start the server with given listener.
-
-	go log.Fatal(httpapp.Listen(":8080"))
-
+func startServerHttp(app *fiber.App) {
+	app.Listen(":80")
 }

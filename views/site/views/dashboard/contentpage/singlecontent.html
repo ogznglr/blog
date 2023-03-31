@@ -6,7 +6,13 @@
 
         <!-- ======= Single Post Content ======= -->
         <div class="single-post">
-          <div class="post-meta"><span class="date">{{getCategoryName .Post.CategoryId}}</span> <span class="mx-1">&bullet;</span> <span>{{getDate .Post.CreatedAt}}</span></div>
+          <div class="bg-light d-flex justify-content-between">
+              <div class="post-meta"><span class="date">{{getCategoryName .Post.CategoryId}}</span> <span class="mx-1">&bullet;</span> <span>{{getDate .Post.CreatedAt}}</span></div>
+              <div class="viewer-count"><i class="bi bi-eye-fill" style="font-size: 24px;" title="Viewer Count"> {{.Viewercount}} </i></div>
+            </div>
+          </div>
+          
+          
           <h1 class="mb-5">{{ .Post.Title }}</h1>
           <h5 class="description">{{.Post.Description}}</h5>
           
@@ -17,7 +23,7 @@
           <div id="blog-content"></div>
           </div><!-- End Single Post Content -->
       </div>
-    </div>
+      </div>
       </div>
     </div>
   </div>
